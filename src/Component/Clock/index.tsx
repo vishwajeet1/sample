@@ -26,12 +26,12 @@ const Clock = () => {
     if (clockMinRef.current) clearInterval(clockMinRef.current);
     if (clockSecRef.current) clearInterval(clockSecRef.current);
     clockMinRef.current = setInterval(() => {
-      if (minutes >= 60) setMinutes(() => 0);
-      else setMinutes((prevState) => prevState + 1);
+      setMinutes((prevState) => (prevState >= 59 ? 0 : prevState + 1));
     }, 1000 * 60);
     clockSecRef.current = setInterval(() => {
-      if (seconds >= 60) setSeconds(() => 0);
-      else setSeconds((prevState) => prevState + 1);
+      if (seconds >= 59)
+        setMinutes((prevState) => (prevState >= 59 ? 0 : prevState + 1));
+      setSeconds((prevState) => (prevState >= 59 ? 0 : prevState + 1));
     }, 1000);
     return () => {
       if (clockMinRef.current) clearInterval(clockMinRef.current);
@@ -41,15 +41,6 @@ const Clock = () => {
 
   const validationOnInput = (value: number) => {
     return value % 60 || 0;
-  };
-  const handleInputChange = (event: any) => {
-    const value = event.target.value;
-    setInputTime(value);
-    const [newMinutes, newSeconds] = value
-      .split(":")
-      .map((part: any) => parseInt(part));
-    setMinutes(() => validationOnInput(newMinutes));
-    setSeconds(() => validationOnInput(newSeconds));
   };
 
   const handleMinInputChange = (event: any) => {
